@@ -21,7 +21,7 @@ class SocketController {
     _myInfo = new AddressInfo();
   }
 
-  _setNetworkInfo() async {
+  setNetworkInfo() async {
     try {
       ConnectivityResult connectivityResult = await _connectivify.checkConnectivity();
       //
@@ -53,6 +53,9 @@ class SocketController {
 
     _myInfo.ip = ip;
     _myInfo.port = Static.UDP_PORT;
+
+    _bindUDPServer();
+    _bindTCPServer();
   }
 
   _getEthernetInfo() async {
@@ -67,6 +70,9 @@ class SocketController {
     }
     _myInfo.ip = ip;
     _myInfo.port = Static.UDP_PORT;
+
+    _bindUDPServer();
+    _bindTCPServer();
   }
 
   _bindUDPServer() async {
