@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tcp_server/view/cupertino/main_cupertino_view.dart';
+import 'package:flutter_tcp_server/view/material/main_material_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,31 +20,34 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MainPage(title),
+      home: MaterialPage(title),
     );
   }
 }
 
-class MainPage extends StatefulWidget {
+class MaterialPage extends StatelessWidget {
   final String title;
 
-  MainPage(this.title);
+  MaterialPage(this.title);
 
-
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Text(''),
-      ),
+    return MaterialApp(
+      home: MaterialMainPage(title),
+    );
+  }
+}
+
+
+class CupertinoPage extends StatelessWidget {
+  final String title;
+
+  CupertinoPage(this.title);
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoApp(
+      home: CupertinoMainPage(title),
     );
   }
 }
