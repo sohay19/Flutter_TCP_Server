@@ -1,10 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tcp_server/view/cupertino/main_cupertino_view.dart';
-import 'package:flutter_tcp_server/view/material/main_material_view.dart';
+import 'package:provider/provider.dart';
+
+import 'provider/main_provider.dart';
+import 'view/cupertino/main_cupertino_view.dart';
+import 'view/material/main_material_view.dart';
+
 
 void main() {
-  runApp(const MyApp());
+  runApp( ChangeNotifierProvider(
+    create: (_) => MainProvider(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -15,13 +24,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: title,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MaterialPage(title),
-    );
+    if (Platform.isIOS || Platform.isMacOS) {
+      return CupertinoPage(title);
+    } else {
+      return MaterialPage(title);
+    }
   }
 }
 
