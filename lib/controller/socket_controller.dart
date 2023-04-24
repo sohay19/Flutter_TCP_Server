@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter_tcp_server/model/address_info.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
+import '../model/address_info.dart';
 import '../utils/enums.dart';
 import '../utils/statc_value.dart';
 
