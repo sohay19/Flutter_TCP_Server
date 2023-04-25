@@ -50,6 +50,7 @@ class _MaterialMainPageState extends State<CupertinoMainPage> {
                   'Clear',
                   style: TextStyle(
                     color: CupertinoColors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 onPressed: () {
@@ -73,31 +74,42 @@ class _ButtonMenu extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        CupertinoButton(
-          padding: EdgeInsets.all(15),
-          color: CupertinoColors.systemGroupedBackground,
-          child: Text(
-            'Open Server',
-            style: TextStyle(
-              color: CupertinoColors.black,
+        Expanded(
+          child: CupertinoButton(
+            padding: EdgeInsets.all(15),
+            color: CupertinoColors.systemGroupedBackground,
+            child: Text(
+              'Open Server',
+              style: TextStyle(
+                color: CupertinoColors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
             ),
+            onPressed: () {
+              context.read<MainProvider>().openServer();
+            },
           ),
-          onPressed: () {
-            context.read<MainProvider>().openServer();
-          },
         ),
-        CupertinoButton(
-          padding: EdgeInsets.all(15),
-          color: CupertinoColors.systemGroupedBackground,
-          child: Text(
-            'Close Server',
-            style: TextStyle(
-              color: CupertinoColors.black,
+        SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          child: CupertinoButton(
+            padding: EdgeInsets.all(15),
+            color: CupertinoColors.systemGroupedBackground,
+            child: Text(
+              'Close Server',
+              style: TextStyle(
+                color: CupertinoColors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
             ),
+            onPressed: () {
+              context.read<MainProvider>().closeServer();
+            },
           ),
-          onPressed: () {
-            context.read<MainProvider>().closeServer();
-          },
         ),
       ],
     );
