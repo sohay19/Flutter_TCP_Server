@@ -47,7 +47,7 @@ class _MaterialMainPageState extends State<CupertinoMainPage> {
               child: CupertinoButton(
                 color: CupertinoColors.black,
                 child: Text(
-                  'clear',
+                  'Clear',
                   style: TextStyle(
                     color: CupertinoColors.white,
                   ),
@@ -77,7 +77,7 @@ class _ButtonMenu extends StatelessWidget {
           padding: EdgeInsets.all(15),
           color: CupertinoColors.systemGroupedBackground,
           child: Text(
-            'open Server',
+            'Open Server',
             style: TextStyle(
               color: CupertinoColors.black,
             ),
@@ -90,7 +90,7 @@ class _ButtonMenu extends StatelessWidget {
           padding: EdgeInsets.all(15),
           color: CupertinoColors.systemGroupedBackground,
           child: Text(
-            'close Server',
+            'Close Server',
             style: TextStyle(
               color: CupertinoColors.black,
             ),

@@ -29,9 +29,6 @@ class _MaterialMainPageState extends State<MaterialMainPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(
-                height: 20,
-              ),
               _ButtonMenu(),
               SizedBox(
                 height: 20,
@@ -45,14 +42,16 @@ class _MaterialMainPageState extends State<MaterialMainPage> {
               Container(
                 height: 50,
                 child: ElevatedButton(
-                  child: Text('clear'),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                      Colors.black,
+                    )
+                  ),
+                  child: Text('Clear'),
                   onPressed: () {
                     context.read<MainProvider>().clearMessage();
                   },
                 ),
-              ),
-              SizedBox(
-                height: 20,
               ),
             ],
           )
@@ -65,20 +64,30 @@ class _ButtonMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        ElevatedButton(
-          child: Text('open Server'),
-          onPressed: () {
-            context.read<MainProvider>().openServer();
-          },
+        Expanded(
+          child:
+          ElevatedButton(
+            child: Text('Open Server'),
+            onPressed: () {
+              context.read<MainProvider>().openServer();
+            },
+          ),
         ),
-        ElevatedButton(
-          child: Text('close Server'),
-          onPressed: () {
-            context.read<MainProvider>().closeServer();
-          },
+        SizedBox(
+          width: 20,
         ),
+        Expanded(
+          child:
+          ElevatedButton(
+            child: Text('Close Server'),
+            onPressed: () {
+              context.read<MainProvider>().closeServer();
+            },
+          ),
+        ),
+
       ],
     );
   }
