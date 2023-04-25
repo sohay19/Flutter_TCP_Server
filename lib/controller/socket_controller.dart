@@ -11,10 +11,12 @@ import '../utils/statc_value.dart';
 
 class SocketController {
   final Connectivity _connectivify = Connectivity();
-
   late RawDatagramSocket _udpSocket;
   late ServerSocket _tcpSocket;
   late AddressInfo _myInfo;
+
+  String _message = '';
+  Function? showMessage;
 
 
   SocketController() {
@@ -24,7 +26,6 @@ class SocketController {
   setNetworkInfo() async {
     try {
       ConnectivityResult connectivityResult = await _connectivify.checkConnectivity();
-      //
       if (Platform.isIOS || Platform.isAndroid) {
         if (connectivityResult == ConnectivityResult.wifi) {
           await _getWifiInfo();
@@ -79,8 +80,10 @@ class SocketController {
         Datagram? datagram = _udpSocket.receive();
         if (datagram != null) {
           final String receiveMsg = String.fromCharCodes(datagram.data);
-          print('===== Broadcast =====');
-          print(receiveMsg);
+          _message += '>> Receive\n';
+          _message += '${receiveMsg}\n';
+          //
+          _endProcess();
           final list = receiveMsg.split(' ');
           final operator = OperatorType.values.firstWhere((element) => element.msg == list.first);
           if (operator != OperatorType.SEARCH) {
@@ -88,10 +91,18 @@ class SocketController {
           }
           final String sendMsg = '${_myInfo.ip} ${Static.TCP_PORT}';
           _udpSocket.send(utf8.encode(sendMsg), InternetAddress(list[1]), int.parse(list.last));
+          _message += '>> Send\n';
+          _message += '${sendMsg}\n';
+          //
+          _endProcess();
         }
       });
+    } on SocketException catch (e) {
+      if (e.osError?.errorCode == 48) {
+        _message += 'Already Opened\n';
+        _endProcess();
+      }
     } catch (e) {
-      print(e);
       throw ErrorType.BIND;
     }
   }
@@ -99,32 +110,62 @@ class SocketController {
   _bindTCPServer() async {
     try {
       _tcpSocket = await ServerSocket.bind(InternetAddress.anyIPv4, Static.TCP_PORT, shared: true);
+      _message += 'Open Server\n';
+      _endProcess();
       _tcpSocket.listen(_listenTCPServer);
     } catch (e) {
-      print(e);
       throw ErrorType.BIND;
     }
   }
 
   _listenTCPServer(Socket clientSocket) {
     try {
-      final String sendMsg = 'SUCCESS CONNECTION!';
+      final String sendMsg = 'SUCCESS_CONNECTION!';
       clientSocket.add(utf8.encode(sendMsg));
+      _message += '>> Receive\n';
+      _message += 'CONNECT\n\n';
+      _message += '>> Send\n';
+      _message += '${sendMsg}\n';
+      _endProcess();
       //
       clientSocket.listen((data) {
         final String receiveMsg = String.fromCharCodes(data);
-        print('===== receiveMsg =====');
+        _message += '>> Receive\n';
+        _message += '${receiveMsg}\n\n';
         final list = receiveMsg.split(' ');
         final operator = OperatorType.values.firstWhere((element) => element.msg == list.first);
         switch(operator) {
-          default:
-            final String sendMsg = '';
+          case OperatorType.GETINT:
+            final String sendMsg = '${operator.msg} 8';
             clientSocket.add(utf8.encode(sendMsg));
+            _message += '>> Send\n';
+            _message += '${sendMsg}\n';
+            break;
+          case OperatorType.GETSTRING:
+            final String sendMsg = '${operator.msg} practice';
+            clientSocket.add(utf8.encode(sendMsg));
+            _message += '>> Send\n';
+            _message += '${sendMsg}\n';
+            break;
+          default:
             break;
         }
+        _endProcess();
       });
     } catch (e) {
       throw ErrorType.SEND;
     }
+  }
+
+  closeServer() {
+    _udpSocket.close();
+    _tcpSocket.close();
+    _message += 'Close Server\n';
+    _endProcess();
+  }
+
+  _endProcess() {
+    showMessage?.call(_message);
+    _message = '';
   }
 }

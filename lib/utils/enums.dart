@@ -6,7 +6,9 @@ enum ErrorType {
 }
 
 enum OperatorType {
-  SEARCH('search');
+  SEARCH('search'),
+  GETINT('getint'),
+  GETSTRING('getstring');
 
   final String msg;
   const OperatorType(this.msg);
