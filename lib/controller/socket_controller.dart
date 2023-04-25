@@ -52,9 +52,7 @@ class SocketController {
     ip = await info.getWifiIP() ?? "";
 
     _myInfo.ip = ip;
-    _myInfo.port = Static.UDP_PORT;
     _bindUDPServer();
-    // _bindTCPServer();
   }
 
   _getEthernetInfo() async {
@@ -68,55 +66,60 @@ class SocketController {
       }
     }
     _myInfo.ip = ip;
-    _myInfo.port = Static.UDP_PORT;
     _bindUDPServer();
-    // _bindTCPServer();
   }
 
   _bindUDPServer() async {
     try {
-      _udpSocket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, Static.UDP_PORT);
+      _udpSocket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, Static.UDP_PORT).then((value) {
+        _bindTCPServer();
+        return value;
+      });
       _udpSocket.listen((event) {
         Datagram? datagram = _udpSocket.receive();
         if (datagram != null) {
           final String receiveMsg = String.fromCharCodes(datagram.data);
-          print('===== receiveMsg =====');
+          print('===== Broadcast =====');
           print(receiveMsg);
           final list = receiveMsg.split(' ');
           final operator = OperatorType.values.firstWhere((element) => element.msg == list.first);
           if (operator != OperatorType.SEARCH) {
             return;
           }
-          final String sendMsg = '${_myInfo.ip} ${Static.UDP_PORT}';
+          final String sendMsg = '${_myInfo.ip} ${Static.TCP_PORT}';
           _udpSocket.send(utf8.encode(sendMsg), InternetAddress(list[1]), int.parse(list.last));
         }
       });
     } catch (e) {
+      print(e);
       throw ErrorType.BIND;
     }
   }
 
   _bindTCPServer() async {
     try {
-      _tcpSocket = await ServerSocket.bind(InternetAddress.anyIPv4, Static.TCP_PORT);
+      _tcpSocket = await ServerSocket.bind(InternetAddress.anyIPv4, Static.TCP_PORT, shared: true);
       _tcpSocket.listen(_listenTCPServer);
     } catch (e) {
+      print(e);
       throw ErrorType.BIND;
     }
   }
 
   _listenTCPServer(Socket clientSocket) {
     try {
+      final String sendMsg = 'SUCCESS CONNECTION!';
+      clientSocket.add(utf8.encode(sendMsg));
+      //
       clientSocket.listen((data) {
         final String receiveMsg = String.fromCharCodes(data);
+        print('===== receiveMsg =====');
         final list = receiveMsg.split(' ');
         final operator = OperatorType.values.firstWhere((element) => element.msg == list.first);
         switch(operator) {
-          case OperatorType.CONNECT:
-            final String sendMsg = 'SUCCESS CONNECTION!';
-            clientSocket.add(utf8.encode(sendMsg));
-            break;
           default:
+            final String sendMsg = '';
+            clientSocket.add(utf8.encode(sendMsg));
             break;
         }
       });

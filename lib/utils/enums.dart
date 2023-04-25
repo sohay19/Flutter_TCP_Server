@@ -6,8 +6,7 @@ enum ErrorType {
 }
 
 enum OperatorType {
-  SEARCH('search'),
-  CONNECT('connet');
+  SEARCH('search');
 
   final String msg;
   const OperatorType(this.msg);
