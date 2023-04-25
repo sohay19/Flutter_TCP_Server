@@ -12,8 +12,8 @@ import '../utils/statc_value.dart';
 class SocketController {
   final Connectivity _connectivify = Connectivity();
 
-  late ServerSocket udpSocket;
-  late ServerSocket tcpSocket;
+  late RawDatagramSocket _udpSocket;
+  late ServerSocket _tcpSocket;
   late AddressInfo _myInfo;
 
 
@@ -53,9 +53,8 @@ class SocketController {
 
     _myInfo.ip = ip;
     _myInfo.port = Static.UDP_PORT;
-
     _bindUDPServer();
-    _bindTCPServer();
+    // _bindTCPServer();
   }
 
   _getEthernetInfo() async {
@@ -70,15 +69,28 @@ class SocketController {
     }
     _myInfo.ip = ip;
     _myInfo.port = Static.UDP_PORT;
-
     _bindUDPServer();
-    _bindTCPServer();
+    // _bindTCPServer();
   }
 
   _bindUDPServer() async {
     try {
-      udpSocket = await ServerSocket.bind(InternetAddressType.IPv4, Static.UDP_PORT);
-      udpSocket.listen(_listenUDPServer);
+      _udpSocket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, Static.UDP_PORT);
+      _udpSocket.listen((event) {
+        Datagram? datagram = _udpSocket.receive();
+        if (datagram != null) {
+          final String receiveMsg = String.fromCharCodes(datagram.data);
+          print('===== receiveMsg =====');
+          print(receiveMsg);
+          final list = receiveMsg.split(' ');
+          final operator = OperatorType.values.firstWhere((element) => element.msg == list.first);
+          if (operator != OperatorType.SEARCH) {
+            return;
+          }
+          final String sendMsg = '${_myInfo.ip} ${Static.UDP_PORT}';
+          _udpSocket.send(utf8.encode(sendMsg), InternetAddress(list[1]), int.parse(list.last));
+        }
+      });
     } catch (e) {
       throw ErrorType.BIND;
     }
@@ -86,27 +98,10 @@ class SocketController {
 
   _bindTCPServer() async {
     try {
-      udpSocket = await ServerSocket.bind(InternetAddressType.IPv4, Static.TCP_PORT);
-      udpSocket.listen(_listenTCPServer);
+      _tcpSocket = await ServerSocket.bind(InternetAddress.anyIPv4, Static.TCP_PORT);
+      _tcpSocket.listen(_listenTCPServer);
     } catch (e) {
       throw ErrorType.BIND;
-    }
-  }
-
-  _listenUDPServer(Socket clientSocket) {
-    try {
-      clientSocket.listen((data) {
-        final String receiveMsg = String.fromCharCodes(data);
-        final list = receiveMsg.split(' ');
-        final operator = OperatorType.values.firstWhere((element) => element.msg == list.first);
-        if (operator != OperatorType.SEARCH) {
-          return;
-        }
-        final String sendMsg = '${_myInfo.ip} ${Static.TCP_PORT}';
-        clientSocket.add(utf8.encode(sendMsg));
-      });
-    } catch (e) {
-      throw ErrorType.SEND;
     }
   }
 

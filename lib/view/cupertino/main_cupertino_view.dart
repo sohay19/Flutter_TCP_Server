@@ -1,6 +1,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+
+import '../../provider/main_provider.dart';
 
 
 class CupertinoMainPage extends StatefulWidget {
@@ -22,7 +25,12 @@ class _MaterialMainPageState extends State<CupertinoMainPage> {
       ),
       child: SafeArea(
         child: Center(
-          child: Text(''),
+          child: CupertinoButton(
+            child: Text('open Server'),
+            onPressed: () {
+              context.read<MainProvider>().openServer();
+            },
+          ),
         ),
       ),
     );
