@@ -47,7 +47,11 @@ class _MaterialMainPageState extends State<MaterialMainPage> {
                       Colors.black,
                     )
                   ),
-                  child: Text('Clear'),
+                  child: Text('Clear',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   onPressed: () {
                     context.read<MainProvider>().clearMessage();
                   },
@@ -69,7 +73,17 @@ class _ButtonMenu extends StatelessWidget {
         Expanded(
           child:
           ElevatedButton(
-            child: Text('Open Server'),
+            child: Text('Open Server',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                Colors.white60,
+              )
+            ),
             onPressed: () {
               context.read<MainProvider>().openServer();
             },
@@ -81,7 +95,17 @@ class _ButtonMenu extends StatelessWidget {
         Expanded(
           child:
           ElevatedButton(
-            child: Text('Close Server'),
+            child: Text('Close Server',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(
+                  Colors.white60,
+                )
+            ),
             onPressed: () {
               context.read<MainProvider>().closeServer();
             },
